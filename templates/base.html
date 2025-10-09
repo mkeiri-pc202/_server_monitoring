@@ -12,7 +12,35 @@
         rel="stylesheet" 
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" 
         crossorigin="anonymous">
-
+        
+    <style>
+    /* ソート可能なヘッダーにポインターカーソル */
+    th.tablesorter-header {
+        cursor: pointer;
+        position: relative;
+        padding-right: 20px;
+    }
+    /* 昇順アイコン */
+    th.tablesorter-headerAsc::after {
+        content: "▲";
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8em;
+        color: #323232;
+    }
+    /* 降順アイコン */
+    th.tablesorter-headerDesc::after {
+        content: "▼";
+        position: absolute;
+        right: 5px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8em;
+        color: #323232;
+    }
+    </style>
 </head>
 <body>
 

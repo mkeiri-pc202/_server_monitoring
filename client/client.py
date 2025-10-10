@@ -11,7 +11,7 @@ hostname = socket.gethostname()
 def get_status():
     """
     CPU使用率、メモリ使用率、ディスク空き容量を取得して数値で返す
-    取得時に問題が発生した場合は、エラーメッセージを返す。
+    取得時に問題が発生した場合は、エラーメッセージを返す
 
     Returns:
         tuple: 以下の3つの値を含むタプル
@@ -35,15 +35,19 @@ def send_status():
     取得したステータスをJSON形式で指定先のサーバにPOST送信する
     
     送信データには、サーバID、CPU使用率、メモリ使用率、ディスク空き容量が含まれる
-    サーバの応答が正常でなければ、各種エラーメッセージを返す。 
+    サーバの応答が正常でなければ、問題に応じてエラーメッセージを返す 
     """
     cpu, memory, disk = get_status()
+    if None in (cpu, memory, disk):
+        print("取得失敗のため送信をスキップ")
+        return
     data = {
         'server_id': hostname,
         'cpu': cpu,
         'memory': memory,
         'disk_free_gb': disk
     }
+
     try:
         r = requests.post(POST_URL, json=data, timeout=5)
         r.raise_for_status()
@@ -65,9 +69,9 @@ def send_status():
 
 if __name__ == '__main__':
     """
-    10秒ごとにステータスを取得・送信を行う監視ループを開始する。
+    10秒ごとにステータスを取得・送信を行う監視ループを開始する
 
-    ループの停止はCtrl+Cを押下。
+    ループの停止はCtrl+Cを押下
     """
     try:
         while True:

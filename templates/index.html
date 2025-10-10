@@ -3,16 +3,21 @@
 {% block content %}
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.default.min.css">
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.bootstrap.min.css"> -->
-
-<!-- index1 was updated -->
-<!-- index1 was updated 2-->
-<!-- hogehogehoge -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.bootstrap.min.css"> 
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
 
 <script>
   $(document).ready(function() {
-    $("#fav-table").tablesorter();
+    $('#fav-table').DataTable({
+      order: [[4, 'desc']], 
+      pageLength: 25,
+      language: {
+        search: "検索:",
+        lengthMenu: "_MENU_ 件表示",
+        info: "_TOTAL_ 件中 _START_ 〜 _END_ 件表示"
+      }
+    });
   });
 </script>
 
@@ -23,7 +28,7 @@
       <table id="fav-table" class="table table-striped table-bordered text-center align-middle table-hover tablesorter tablesorter-bootstrap">
         <thead>
           <tr>
-            <th>Server Name</th>
+            <th scope="col">Server Name</th>
             <th>CPU</th>
             <th>Memory</th>
             <th>Disk Free (GB)</th>
@@ -41,7 +46,8 @@
           </tr>
           {% else %}
           <tr>
-            <td colspan="5">No data</td>
+            <td colspan="5">
+            <div class="text-muted">現在表示できるサーバ情報はありません。</div>
           </tr>
           {% endfor %}
         </tbody>

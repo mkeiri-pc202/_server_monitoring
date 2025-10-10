@@ -18,12 +18,16 @@ def mail_send():
     smtp_port = 587
     password = ''  # Gmailの「アプリパスワード」を使用
 
-    with smtplib.SMTP(smtp_server, smtp_port) as server:
-        server.starttls()
-        server.login(sender, password)
-        server.send_message(msg)
+    try:
+        with smtplib.SMTP(smtp_server, smtp_port) as server:
+            server.starttls()
+            server.login(sender, password)
+            server.send_message(msg)
+        print("メールを送信しました。")
 
-    print("メールを送信しました。")
+    except Exception as e:
+        print(f"エラー: メールの送信に失敗しました。 - {e}")
+
 
 if __name__ == '__main__':
     mail_send()

@@ -3,8 +3,8 @@ from email.mime.text import MIMEText
 
 def mail_send():
 # メール情報
-    sender = 'hashwww123456789@gmail.com'
-    receiver = '@gmail.com'
+    sender = 'matsumotokeiri_hirasawa@outlook.jp'
+    receiver = '@outlook.jp'
     subject = 'テストメール'
     body = 'これはPythonから送信されたメールです。'
 # メール作成
@@ -14,9 +14,9 @@ def mail_send():
     msg['To'] = receiver
 
 # SMTPサーバへ接続
-    smtp_server = 'smtp.gmail.com'
+    smtp_server = 'smtp-mail.outlook.com'
     smtp_port = 587
-    password = ''  # Gmailの「アプリパスワード」を使用
+    password = 'ここにアプリパスワードを入力'  # 「アプリパスワード」を使用
 
     try:
         with smtplib.SMTP(smtp_server, smtp_port) as server:

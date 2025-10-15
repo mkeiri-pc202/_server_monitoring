@@ -4,11 +4,6 @@
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.default.min.css">
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.bootstrap.min.css"> -->
-
-<!-- index1 was updated -->
-<!-- index1 was updated 2-->
-<!-- hogehogehoge -->
 
 <script>
   $(document).ready(function() {
@@ -47,6 +42,10 @@
         </tbody>
       </table>
     </div>
+
+
+  <h2 class="mb-4">CPU & Memory Usage Graph</h2>
+  <img src="{{ url_for('plot_png') }}" alt="Server Stats Graph">
   </div>
 {% endblock %}
 

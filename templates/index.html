@@ -111,7 +111,7 @@ $(document).ready(function() {
             d.server_name,
             d.cpu,
             d.memory,
-            d.disk_free_gb,
+            d.disk_free_gb.toFixed(1),
             d.timestamp
           ]);
         });

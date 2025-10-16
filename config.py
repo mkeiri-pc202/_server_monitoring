@@ -1,9 +1,5 @@
 import os
 
-'''
-aaaa
-'''
-
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # os.getcwd()はVSCodeでフォルダを開くときに指定したPathが入る（ターミナルの中のPathを変えると動かない）

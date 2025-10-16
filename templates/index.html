@@ -1,62 +1,138 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/js/jquery.tablesorter.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.0/css/theme.bootstrap.min.css"> 
-<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
 <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+
+<div class="container mt-5 text-center">
+  <h1 class="mb-4">Server Status Monitor</h1>
+
+  <!-- ✅ フィルタフォーム -->
+  <div class="row mb-4 justify-content-center">
+    <div class="col-md-3">
+      <select id="numberOfItemsSelect" class="form-select">
+            <option value="">-- 表示する件数を選択 --</option>
+        {% for n in number_of_items %}
+          <option value="{{ n }}">{{ n }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select id="serverSelect" class="form-select">
+        <option value="">-- サーバを選択 --</option>
+        {% for s in server_list %}
+          <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <input type="date" id="dateInput" class="form-control">
+    </div>
+    <div class="col-md-2">
+      <button id="filterBtn" class="btn btn-primary w-100">実行</button>
+    </div>
+  </div>
+
+  <!-- ✅ グラフ -->
+  <h2 class="mt-5 mb-3 graph">CPU & Memory Usage Graph</h2>
+  <img id="graphImage" class="graph" src="{{ url_for('plot_png') }}" alt="Server Stats Graph">
+
+  <!-- ✅ テーブル -->
+  <div class="table-responsive">
+    <table id="fav-table" class="display table table-striped text-center">
+      <thead>
+        <tr>
+          <th>Server Name</th>
+          <th>CPU</th>
+          <th>Memory</th>
+          <th>Disk Free (GB)</th>
+          <th>Last Updated</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        {% for d in data %}
+        <tr>
+          <td>{{ d.server_name }}</td>
+          <td>{{ d.cpu }}</td>
+          <td>{{ d.memory }}</td>
+          <td>{{ d.disk_free_gb | number_format }}</td>
+          <td>{{ d.timestamp | datetime_format }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+</div>
 
 <script>
-  $(document).ready(function() {
-    $('#fav-table').DataTable({
-      order: [[4, 'desc']], 
-      pageLength: 25,
-      language: {
-        search: "検索:",
-        lengthMenu: "_MENU_ 件表示",
-        info: "_TOTAL_ 件中 _START_ 〜 _END_ 件表示"
+$(document).ready(function() {
+  let table = $('#fav-table').DataTable({
+    dom: 't', // いったんテーブルだけに変更
+    order: [[4, 'desc']],
+    pageLength: 25,
+    language: {
+      search: "検索:",
+      lengthMenu: "_MENU_ 件表示",
+      info: "_TOTAL_ 件中 _START_ 〜 _END_ 件表示"
+    }
+  });
+
+  // グラフ要素を最初は非表示にする
+  // $('#graphImage').hide();
+  // $('#graphTitle').hide();
+  $('.graph').hide();
+  
+  
+  // ✅ 実行ボタンの処理
+  $('#filterBtn').on('click', function() {
+    const server = $('#serverSelect').val();
+    const date = $('#dateInput').val();
+    const numberOfItemsSelect =  $('#numberOfItemsSelect').val();
+
+    if (!server) {
+      alert('サーバを選択してください。');
+      $('.graph').hide(); // グラフを隠す
+      table.clear().draw(); // テーブルも空にする（必要なら）
+      return;
+    }
+
+    $.ajax({
+      url: '/api/status',
+      method: 'GET',
+      data: { server: server, date: date,numberOfItemsSelect:numberOfItemsSelect },
+      success: function(response) {
+        // テーブル更新
+        table.clear();
+        response.data.forEach(function(d) {
+          table.row.add([
+            d.server_name,
+            d.cpu,
+            d.memory,
+            d.disk_free_gb,
+            d.timestamp
+          ]);
+        });
+        table.draw();
+
+        // ✅ サーバが選択されている場合のみグラフを表示
+        if (response.data.length > 0) {
+          const ts = new Date().getTime(); // キャッシュ防止
+          $('.graph')
+            .attr('src', `/plot.png?server=${server}&date=${date}&_=${ts}`)
+            .show();
+        } else {
+          $('.graph').hide();
+        }
+      },
+      error: function() {
+        alert('データの取得に失敗しました。');
+        $('.graph').hide();
       }
     });
   });
+});
 </script>
-
-  <div class="container mt-5 text-center">
-    <h1 class="mb-4">Server Status Monitor</h1>
-
-    <div class="table-responsive">
-      <table id="fav-table" class="table table-striped table-bordered text-center align-middle table-hover tablesorter tablesorter-bootstrap">
-        <thead>
-          <tr>
-            <th scope="col">Server Name</th>
-            <th>CPU</th>
-            <th>Memory</th>
-            <th>Disk Free (GB)</th>
-            <th>Last Updated</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for d in data %}
-          <tr>
-            <td>{{ d.server_name }}</td>
-            <td>{{ d.cpu }}</td>
-            <td>{{ d.memory }}</td>
-            <td>{{ d.disk_free_gb | number_format }}</td>
-            <td>{{ d.timestamp | datetime_format }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="5">
-            <div class="text-muted">現在表示できるサーバ情報はありません。</div>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-
-
-  <h2 class="mb-4">CPU & Memory Usage Graph</h2>
-  <img src="{{ url_for('plot_png') }}" alt="Server Stats Graph">
-  </div>
 {% endblock %}
-

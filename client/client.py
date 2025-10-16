@@ -2,15 +2,15 @@ import requests
 import time
 import psutil
 import socket
-# import send_e_mail
+from error_tracker import ErrorTracker
 
 # POST先は仮でlocalhost→受信側のIPアドレスに変更が必要
-POST_URL = 'http://localhost:5000/api/status'
+POST_URL = "http://localhost:5000/api/status"
 hostname = socket.gethostname()
+tracker = ErrorTracker()
 
 def get_status():
-    """
-    CPU使用率、メモリ使用率、ディスク空き容量を取得して数値で返す
+    """CPU使用率、メモリ使用率、ディスク空き容量を取得して数値で返す
     取得時に問題が発生した場合は、エラーメッセージを返す
 
     Returns:
@@ -22,30 +22,31 @@ def get_status():
     try:
         cpu = psutil.cpu_percent(interval=1)
         memory = psutil.virtual_memory().percent
-        disk = psutil.disk_usage('C:\\').free / (1024 ** 3)
+        disk = psutil.disk_usage("C:\\").free / (1024 ** 3)
         return cpu, memory, disk
     except Exception as e:
-        error_msg = f'ステータス取得エラー: {type(e).__name__} - {e}'
-        print(error_msg)
+        msg = f"ステータス取得エラー: {type(e).__name__} - {e}"
+        print(msg)
+        tracker.check_error(msg)
         return None, None, None
 
 
 def send_status():
-    """
-    取得したステータスをJSON形式で指定先のサーバにPOST送信する
+    """取得したステータスをJSON形式で指定先のサーバにPOST送信する
     
     送信データには、サーバID、CPU使用率、メモリ使用率、ディスク空き容量が含まれる
-    サーバの応答が正常でなければ、問題に応じてエラーメッセージを返す 
+    サーバの応答が正常でなければ、問題に応じてエラーメッセージを返す
+    また、send_e_mail.pyのsend_mail(msg)関数を呼び出す
     """
     cpu, memory, disk = get_status()
     if None in (cpu, memory, disk):
         print("取得失敗のため送信をスキップ")
         return
     data = {
-        'server_id': hostname,
-        'cpu': cpu,
-        'memory': memory,
-        'disk_free_gb': disk
+        "server_id": hostname,
+        "cpu": cpu,
+        "memory": memory,
+        # "disk_free_gb": disk
     }
 
     try:
@@ -55,21 +56,23 @@ def send_status():
     except requests.exceptions.Timeout as e:
         msg = f"タイムアウト: {e}"
         print(msg)
+        tracker.check_error(msg)
     except requests.exceptions.ConnectionError as e:
         msg = f"接続エラー: {e}"
         print(msg)
+        tracker.check_error(msg)
     except requests.exceptions.HTTPError as e:
         msg = f"HTTPエラー: {e}"
         print(msg)
-        # send_e_mail.mail_send(msg)
+        tracker.check_error(msg)
     except requests.exceptions.RequestException as e:
         msg = f"その他の通信エラー: {e}"
         print(msg)
+        tracker.check_error(msg)
 
 
 if __name__ == '__main__':
-    """
-    10秒ごとにステータスを取得・送信を行う監視ループを開始する
+    """10秒ごとにステータスを取得・送信を行う監視ループを開始する
 
     ループの停止はCtrl+Cを押下
     """
@@ -78,4 +81,4 @@ if __name__ == '__main__':
             send_status()
             time.sleep(10)
     except KeyboardInterrupt:
-        print('End')
+        print("End")

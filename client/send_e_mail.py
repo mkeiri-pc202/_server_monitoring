@@ -15,7 +15,7 @@ def send_mail(msg):
     outlook = win32com.client.Dispatch("Outlook.Application")
     mail = outlook.CreateItem(0)
 
-    mail.to = "matsumotokeiri_hirasawa@outlook.jp"
+    mail.to = "(送信先のoutlookのメールアドレス)"
     mail.subject = "エラー発生メール"
     mail.bodyFormat = 1
     mail.body = "エラー発生" \

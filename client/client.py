@@ -1,11 +1,17 @@
 import requests
 import time
 import psutil
+import json
 import socket
 from error_tracker import ErrorTracker
 
-# POST先は仮でlocalhost→受信側のIPアドレスに変更が必要
-POST_URL = "http://localhost:5000/api/status"
+with open('post.json', 'r') as f:
+    post = json.load(f)
+
+try:
+    POST_URL = post["POST_URL"]
+except KeyError:
+    raise ValueError("post.jsonに'POST_URL'が定義されていません")    
 hostname = socket.gethostname()
 tracker = ErrorTracker()
 
@@ -51,7 +57,7 @@ def send_status():
         "server_id": hostname,
         "cpu": cpu,
         "memory": memory,
-        # "disk_free_gb": disk
+        "disk_free_gb": disk
     }
 
     try:

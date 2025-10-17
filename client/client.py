@@ -34,9 +34,14 @@ def get_status():
 def send_status():
     """取得したステータスをJSON形式で指定先のサーバにPOST送信する
     
-    送信データには、サーバID、CPU使用率、メモリ使用率、ディスク空き容量が含まれる
-    サーバの応答が正常でなければ、問題に応じてエラーメッセージを返す
-    また、send_e_mail.pyのsend_mail(msg)関数を呼び出す
+    サーバID、CPU使用率、メモリ使用率、ディスク空き容量を取得し、POST_URLに送信する
+    送信に失敗した場合は、エラーをログに記録する
+
+    Raises:
+        - requests.exceptions.Timeout: タイムアウトが発生した場合
+        - requests.exceptions.ConnectionError: 接続エラーが発生した場合
+        - requests.exceptions.HTTPError: HTTPステータスコードがエラーを示す場合
+        - requests.exceptions.RequestException: その他のリクエスト関連エラー
     """
     cpu, memory, disk = get_status()
     if None in (cpu, memory, disk):

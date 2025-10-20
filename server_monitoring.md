@@ -51,10 +51,11 @@
 - HTML、Bootstrup、CSS、jQueryを使用して作成した
 
 ### 5.1 コマンドライン (CLI)
-- 起動方法:Pythonを起動し、app.pyを実行する
+- 起動方法:DockerからPythonを起動し、app.pyを実行する
 
 ### 5.2 GUI / Web
-- 起動方法:存在していない
+- 起動方法:GUIでの起動は想定していない。
+- 
   
 ---
 
@@ -92,7 +93,14 @@
   - filter.py(Flaskのフィルタリング機能の設定）
   - models.py(DB名、カラムの指定)
   - views.py(データ受信、メインページの表示、グラフの出力などの関数を設定）
-    - 
+    -client(監視対象用のプログラムを保存しているフォルダ)
+        - client.py(データ送信用プログラムの起動）
+        - send_e_mail.py(利用状況の閾値を超えた際のメール送信の設定)
+    - instance（DBの保存場所）
+        -server_status.sqlite
+    - templates(HTMLファイルの保存場所）
+        - base.html
+        - index.html
 
 ### 9.1 データフロー（簡易）
 入力 → click_event.py（文字列で入力されたデータを加工)→ 確定（イコールまたはEnterキーの入力）→ calc.py(入力されたデータから計算を行う) 

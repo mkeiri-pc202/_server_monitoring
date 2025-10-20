@@ -93,14 +93,16 @@
   - filter.py(Flaskのフィルタリング機能の設定）
   - models.py(DB名、カラムの指定)
   - views.py(データ受信、メインページの表示、グラフの出力などの関数を設定）
-    - client(監視対象用のプログラムを保存しているフォルダ)
+
+- client(監視対象用のプログラムを保存しているフォルダ)
         - client.py(データ送信用プログラムの起動）
         - send_e_mail.py(利用状況の閾値を超えた際のメール送信の設定)
-    - instance（DBの保存場所）
-        - server_status.sqlite
-    - templates(HTMLファイルの保存場所）
-        - base.html
-        - index.html
+
+- instance（DBの保存場所）
+  - server_status.sqlite
+- templates(HTMLファイルの保存場所）
+  - base.html
+  - index.html
 
 ### 9.1 データフロー（簡易）
 入力 → click_event.py（文字列で入力されたデータを加工)→ 確定（イコールまたはEnterキーの入力）→ calc.py(入力されたデータから計算を行う) 

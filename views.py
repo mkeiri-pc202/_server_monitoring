@@ -101,19 +101,26 @@ def plot_png():
     if not data:
         # データがない場合はメッセージ付きの空グラフを返す
         fig, ax = plt.subplots(figsize=(6, 3))
-        ax.text(0.5, 0.5, 'データがありません', ha='center', va='center', fontsize=14)
+        ax.text(0.5, 0.5, 'No Data Found', ha='center', va='center', fontsize=14)
         plt.tight_layout()
     else:
         timestamps = [d.timestamp.strftime('%H:%M:%S') for d in data]
         cpu_values = [d.cpu for d in data]
         memory_values = [d.memory for d in data]
+        disk_free_gb = [d.disk_free_gb for d in data]
 
-        fig, ax = plt.subplots(figsize=(6, 3))
-        ax.plot(timestamps, cpu_values, label='CPU %')
-        ax.plot(timestamps, memory_values, label='Memory %')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Usage (%)')
-        ax.legend()
+        fig, ax = plt.subplots(1,2,figsize=(8, 4))
+        ax[0].plot(timestamps, cpu_values, label='CPU %')
+        ax[0].plot(timestamps, memory_values, label='Memory %')
+        ax[0].set_xlabel('Time')
+        ax[0].set_ylabel('Usage (%)')
+        ax[0].legend()
+        
+        ax[1].plot(timestamps, disk_free_gb, label='Disc Free Space(GB)')
+        ax[1].set_xlabel('Time')
+        ax[1].set_ylabel('Disc Free Space(GB)')
+        ax[1].legend()
+        
         plt.xticks(rotation=45)
         plt.tight_layout()
 

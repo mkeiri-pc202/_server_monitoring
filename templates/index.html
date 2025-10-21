@@ -34,6 +34,9 @@
     </div>
   </div>
 
+  <!-- ✅ アラート -->
+  <h4 class="mt-5 mb-3 text-danger">{{ alert_msg }}</h2>
+  
   <!-- ✅ グラフ -->
   <h2 class="mt-5 mb-3 graph">CPU , Memory And Disc Usage Graph</h2>
   <img id="graphImage" class="graph" src="{{ url_for('plot_png') }}" alt="Server Stats Graph">

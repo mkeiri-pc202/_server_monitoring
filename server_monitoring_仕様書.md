@@ -148,7 +148,7 @@
 - OS	Windows 11
 - 言語 / Python 3.13
 - 使用ツール	VSCode
-- フレームワーク	Python 3.10 / flask 2.3.2 / flask_migrate 4.0.4/  flask_sqlalchemy 3.0.3 / matplotlib 3.10.6 / anaconda
+- フレームワーク	Python 3.10 / flask 2.3.2 / flask_migrate 4.0.4/  flask_sqlalchemy 3.0.3 / matplotlib 3.10.6 /
 - 仮想環境	Anaconda(conda 24.9.2)
 
 ---

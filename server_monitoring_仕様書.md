@@ -108,8 +108,7 @@
   - index.html
 
 ### 9.1 データフロー（簡易）
-<img width="474" height="733" alt="Image" src="https://github.com/user-attachments/assets/e02ee5ee-59fe-4d66-9a07-f33a86d05bea" />
-  
+<img width="474" height="733" alt="Image" src="https://github.com/user-attachments/assets/6cd287bb-307a-4977-8bec-0d5cf37be3c6" />
 ---
 
 ## 10. テスト計画

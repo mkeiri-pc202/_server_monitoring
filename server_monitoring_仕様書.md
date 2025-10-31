@@ -32,8 +32,6 @@
 
 ## 4. 機能要件
 
-<img width="1751" height="858" alt="Image" src="https://github.com/user-attachments/assets/1b4205a5-d65d-4056-a541-affb8c9dbf01" />
-
 ### 4.1 基本機能
 - 監視対象から監視アプリに対して稼働状況を送信する
 - サーバモニタリング用の端末のWebServiceを使って、監視対象からの通知ログを確認する
@@ -51,6 +49,8 @@
 ---
 
 ## 5. ユーザーインターフェース（UI / UX）
+<img width="1351" height="658" alt="Image" src="https://github.com/user-attachments/assets/1b4205a5-d65d-4056-a541-affb8c9dbf01" />
+
 - HTML、Bootstrup、CSS、jQueryを使用して作成した
 
 ### 5.1 コマンドライン (CLI)

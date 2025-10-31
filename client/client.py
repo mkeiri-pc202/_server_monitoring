@@ -51,7 +51,7 @@ def send_status():
         "server_id": hostname,
         "cpu": cpu,
         "memory": memory,
-        # "disk_free_gb": disk
+        "disk_free_gb": disk
     }
 
     try:

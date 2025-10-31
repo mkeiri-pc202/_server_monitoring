@@ -1,7 +1,7 @@
 from flask import request, jsonify, render_template, make_response
 from app import app
 from models import Server_Status, db
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -52,7 +52,7 @@ def status():
             except ValueError:
                 return jsonify({'error': 'Invalid date format'}), 400
 
-        data = query.order_by(Server_Status.timestamp.desc()).limit(100).all()
+        data = query.order_by(Server_Status.timestamp.desc()).limit(50).all()
         result = [
             {
                 'server_name': d.server_name,
@@ -67,6 +67,45 @@ def status():
 
 
 # --------------------------
+# ✅ アラートメッセージ
+# --------------------------
+'''
+設定した時刻内に送信がないサーバを抽出してメッセージを表示する
+'''
+
+@app.route('/alert_messages')
+def alert_messages():
+    # 現在時刻
+    now = datetime.now()
+
+    # 各サーバの最新timestampを取得
+    results = (
+        db.session.query(
+            Server_Status.server_name,
+            db.func.max(Server_Status.timestamp).label('latest_timestamp')
+        )
+        .group_by(Server_Status.server_name)
+        .all()
+    )
+
+    # 15分以上更新がないサーバを抽出
+    alert_servers = []
+    for server_name, latest_timestamp in results:
+        if latest_timestamp is None:
+            alert_servers.append(server_name)
+        else:
+            diff = now - latest_timestamp
+            if diff > timedelta(minutes=15):
+                alert_servers.append(server_name)
+
+    # メッセージを返す
+    if alert_servers:
+        alert_list = ', '.join(alert_servers)
+        return f'15分以上電文の送信がないサーバがあります: {alert_list}'
+    else:
+        return 'すべてのサーバは15分以内に応答しています。'
+
+# --------------------------
 # ✅ メインページ
 # --------------------------
 @app.route('/')
@@ -74,9 +113,9 @@ def index():
     monitor_data = Server_Status.query.order_by(Server_Status.timestamp.desc()).limit(50).all()
     server_list = [row.server_name for row in db.session.query(Server_Status.server_name).distinct()]
     number_of_items = [25,50,100]
-    return render_template('index.html', data=monitor_data, server_list=server_list,number_of_items=number_of_items)
-
-
+    alert_msg = alert_messages()
+    return render_template('index.html', data=monitor_data, server_list=server_list,number_of_items=number_of_items,alert_msg=alert_msg)
+    
 # --------------------------
 # ✅ グラフ出力 (PNG)
 # --------------------------
@@ -101,19 +140,26 @@ def plot_png():
     if not data:
         # データがない場合はメッセージ付きの空グラフを返す
         fig, ax = plt.subplots(figsize=(6, 3))
-        ax.text(0.5, 0.5, 'データがありません', ha='center', va='center', fontsize=14)
+        ax.text(0.5, 0.5, 'No Data Found', ha='center', va='center', fontsize=14)
         plt.tight_layout()
     else:
         timestamps = [d.timestamp.strftime('%H:%M:%S') for d in data]
         cpu_values = [d.cpu for d in data]
         memory_values = [d.memory for d in data]
+        disk_free_gb = [d.disk_free_gb for d in data]
 
-        fig, ax = plt.subplots(figsize=(6, 3))
-        ax.plot(timestamps, cpu_values, label='CPU %')
-        ax.plot(timestamps, memory_values, label='Memory %')
-        ax.set_xlabel('Time')
-        ax.set_ylabel('Usage (%)')
-        ax.legend()
+        fig, ax = plt.subplots(1,2,figsize=(8, 4))
+        ax[0].plot(timestamps, cpu_values, label='CPU %')
+        ax[0].plot(timestamps, memory_values, label='Memory %')
+        ax[0].set_xlabel('Time')
+        ax[0].set_ylabel('Usage (%)')
+        ax[0].legend()
+        
+        ax[1].plot(timestamps, disk_free_gb, label='Disc Free Space(GB)')
+        ax[1].set_xlabel('Time')
+        ax[1].set_ylabel('Disc Free Space(GB)')
+        ax[1].legend()
+        
         plt.xticks(rotation=45)
         plt.tight_layout()
 

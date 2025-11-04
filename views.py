@@ -147,6 +147,8 @@ def plot_png():
         data = query.order_by(Server_Status.timestamp.desc()).limit(int(limit)).all()
     else:
         data = query.order_by(Server_Status.timestamp.desc()).all()
+        
+    data = list(reversed(data))
     
     if not data:
         # データがない場合はメッセージ付きの空グラフを返す

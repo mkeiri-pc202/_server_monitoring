@@ -42,6 +42,8 @@ def status():
     else:  # GET
         server = request.args.get('server')
         date_str = request.args.get('date')
+        limit = request.args.get('numberOfItemsSelect')
+
 
         query = Server_Status.query
         if server:
@@ -52,8 +54,12 @@ def status():
                 query = query.filter(db.func.date(Server_Status.timestamp) == date)
             except ValueError:
                 return jsonify({'error': 'Invalid date format'}), 400
-
-        data = query.order_by(Server_Status.timestamp.desc()).limit(50).all()
+        if not limit:
+            data = query.order_by(Server_Status.timestamp.desc()).all()
+        elif limit:
+            data = query.order_by(Server_Status.timestamp.desc()).limit(limit).all()
+            
+            
         result = [
             {
                 'server_name': d.server_name,
@@ -125,6 +131,7 @@ def plot_png():
     server = request.args.get('server')
     date_str = request.args.get('date')
     limit = request.args.get('numberOfItemsSelect')
+    
 
     query = Server_Status.query
     if server:
@@ -135,9 +142,12 @@ def plot_png():
             query = query.filter(db.func.date(Server_Status.timestamp) == date)
         except ValueError:
             pass  # 日付が不正なら無視
-
-    data = query.order_by(Server_Status.timestamp.asc()).limit(limit).all()
-
+        
+    if limit and limit.isdigit() and int(limit) > 0:
+        data = query.order_by(Server_Status.timestamp.desc()).limit(int(limit)).all()
+    else:
+        data = query.order_by(Server_Status.timestamp.desc()).all()
+    
     if not data:
         # データがない場合はメッセージ付きの空グラフを返す
         fig, ax = plt.subplots(figsize=(8, 4))

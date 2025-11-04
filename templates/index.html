@@ -75,7 +75,7 @@ $(document).ready(function() {
   let table = $('#fav-table').DataTable({
     dom: 't', // いったんテーブルだけに変更
     order: [[4, 'desc']],
-    pageLength: 25,
+    pageLength: 300,
     language: {
       search: "検索:",
       lengthMenu: "_MENU_ 件表示",
@@ -128,7 +128,7 @@ if (!server && !date) {
         if (response.data.length > 0) {
           const ts = new Date().getTime(); // キャッシュ防止
           $('.graph')
-            .attr('src', `/plot.png?server=${server}&date=${date}&_=${ts}`)
+            .attr('src', `/plot.png?server=${server}&date=${date}&numberOfItemsSelect=${numberOfItemsSelect}&_=${ts}`)
             .show();
         } else {
           $('.graph').hide();

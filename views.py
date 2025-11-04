@@ -142,10 +142,10 @@ def plot_png():
         # データがない場合はメッセージ付きの空グラフを返す
         fig, ax = plt.subplots(figsize=(8, 4))
         ax.text(0.5, 0.5, 'No Data Found', ha='center', va='center', fontsize=14)
-        plt.tight_layout()
+        # plt.tight_layout()
     else:
         # timestamps = [d.timestamp.strftime('%H:%M:%S') for d in data]
-        timestamps = [d.timestamp for d in data]  # ←ここを修正
+        timestamps = [d.timestamp for d in data]
         cpu_values = [d.cpu for d in data]
         memory_values = [d.memory for d in data]
         disk_free_gb = [d.disk_free_gb for d in data]

@@ -95,12 +95,16 @@ $(document).ready(function() {
     const date = $('#dateInput').val();
     const numberOfItemsSelect =  $('#numberOfItemsSelect').val();
 
-    if (!server) {
-      alert('サーバを選択してください。');
-      $('.graph').hide(); // グラフを隠す
-      table.clear().draw(); // テーブルも空にする（必要なら）
-      return;
-    }
+if (!server && !date) {
+  alert('サーバと日付を選択してください。');
+  return;
+} else if (!server) {
+  alert('サーバを選択してください。');
+  return;
+} else if (!date) {
+  alert('日付を選択してください。');
+  return;
+}
 
     $.ajax({
       url: '/api/status',

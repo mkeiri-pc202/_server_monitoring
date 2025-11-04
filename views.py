@@ -6,6 +6,7 @@ from zoneinfo import ZoneInfo
 import matplotlib.pyplot as plt
 from io import BytesIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+import matplotlib.dates as mdates
 
 
 # --------------------------
@@ -139,26 +140,34 @@ def plot_png():
 
     if not data:
         # データがない場合はメッセージ付きの空グラフを返す
-        fig, ax = plt.subplots(figsize=(6, 3))
+        fig, ax = plt.subplots(figsize=(8, 4))
         ax.text(0.5, 0.5, 'No Data Found', ha='center', va='center', fontsize=14)
         plt.tight_layout()
     else:
-        timestamps = [d.timestamp.strftime('%H:%M:%S') for d in data]
+        # timestamps = [d.timestamp.strftime('%H:%M:%S') for d in data]
+        timestamps = [d.timestamp for d in data]  # ←ここを修正
         cpu_values = [d.cpu for d in data]
         memory_values = [d.memory for d in data]
         disk_free_gb = [d.disk_free_gb for d in data]
 
-        fig, ax = plt.subplots(1,2,figsize=(8, 4))
+        fig, ax = plt.subplots(1,2,figsize=(12, 4))
+        fig.autofmt_xdate()
         ax[0].plot(timestamps, cpu_values, label='CPU %')
         ax[0].plot(timestamps, memory_values, label='Memory %')
         ax[0].set_xlabel('Time')
         ax[0].set_ylabel('Usage (%)')
         ax[0].legend()
+        # X軸の表示が細かいのでAutoDateLocatorを使って設定MAX24項目で設定
+        ax[0].xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=24))
+        ax[0].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
         
         ax[1].plot(timestamps, disk_free_gb, label='Disc Free Space(GB)')
         ax[1].set_xlabel('Time')
         ax[1].set_ylabel('Disc Free Space(GB)')
         ax[1].legend()
+        # X軸の表示が細かいのでAutoDateLocatorを使って設定MAX24項目で設定
+        ax[1].xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=24))
+        ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
         
         plt.xticks(rotation=45)
         plt.tight_layout()

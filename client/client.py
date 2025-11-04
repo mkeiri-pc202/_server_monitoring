@@ -84,6 +84,6 @@ if __name__ == '__main__':
     try:
         while True:
             send_status()
-            time.sleep(10)
+            time.sleep(300)
     except KeyboardInterrupt:
         print("End")

@@ -3,6 +3,7 @@ from app import app
 from models import Server_Status, db
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
+import matplotlib.ticker as ticker
 import matplotlib.pyplot as plt
 from io import BytesIO
 from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
@@ -180,6 +181,14 @@ def plot_png():
         # X軸の表示が細かいのでAutoDateLocatorを使って設定MAX24項目で設定
         ax[1].xaxis.set_major_locator(mdates.AutoDateLocator(maxticks=24))
         ax[1].xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+        
+        ax[1].yaxis.set_major_locator(ticker.MultipleLocator(10.0))
+        ax[1].yaxis.set_major_formatter(ticker.FormatStrFormatter('%.0f GB'))
+        
+        # y軸のMAXの値を10で割って1足して10を書けることで調整（きれいに表示するための定石らしい）
+        y_min, y_max = ax[1].get_ylim()
+        ax[1].set_ylim(0, (int(y_max / 10) + 1) * 10)
+        
         
         plt.xticks(rotation=45)
         plt.tight_layout()

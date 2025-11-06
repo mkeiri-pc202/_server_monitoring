@@ -3,7 +3,7 @@ from flask_migrate import Migrate
 from models import db
 
 # --------------------------
-# ✅ ここから各ファイルにかかれたプログラムを起動している
+# ✅ ここからプログラムを起動する
 # --------------------------
 
 app = Flask(__name__)

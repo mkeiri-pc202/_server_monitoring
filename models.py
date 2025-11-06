@@ -2,6 +2,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+# --------------------------
+# ✅ テーブルの定義
+# --------------------------
+
 class Server_Status(db.Model):
     __tablename__ = 'server_status'
 

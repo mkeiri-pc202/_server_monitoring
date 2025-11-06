@@ -53,7 +53,7 @@
 - HTML、Bootstrup、CSS、jQueryを使用して作成した
 
 ### 5.1 コマンドライン (CLI)
-- 起動方法:DockerからPythonを起動し、app.pyを実行する
+- 起動方法:Pythonを起動し、app.pyを実行する（Dockerなどを使う想定
 
 ### 5.2 GUI / Web
 - 起動方法:GUIでの起動は想定していない。

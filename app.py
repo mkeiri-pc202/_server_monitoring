@@ -2,6 +2,10 @@ from flask import Flask
 from flask_migrate import Migrate
 from models import db
 
+# --------------------------
+# ✅ ここから各ファイルにかかれたプログラムを起動している
+# --------------------------
+
 app = Flask(__name__)
 
 app.config.from_object('config.Config')

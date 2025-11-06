@@ -1,5 +1,9 @@
 import os
 
+# --------------------------
+# ✅ DBファイルの作成
+# --------------------------
+
 class Config(object):
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     INSTANCE_DIR = "instance"
